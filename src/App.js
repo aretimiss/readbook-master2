@@ -79,12 +79,13 @@ function SiteHeader({ query, setQuery, onSearch }) {
 
       <div className="hidden md:flex flex-1 justify-end gap-8">
         <nav className="flex items-center gap-9">
-          <a className="navlink" href="#">หน้าหลัก</a>
-          <a className="navlink" href="#">หนังสือ</a>
-          <a className="navlink" href="#">บทความ</a>
-          <a className="navlink" href="#">กิจกรรม</a>
-          <a className="navlink" href="#">ความเป็นมา</a>
+          <a className="navlink" href="/">หน้าหลัก</a>
+          <a className="navlink" href="/books">หนังสือ</a>
+          <a className="navlink" href="/articles">บทความ</a>
+          <a className="navlink" href="/events">กิจกรรม</a>
+          <a className="navlink" href="/about">ความเป็นมา</a>
         </nav>
+
 
       </div>
 
@@ -250,20 +251,20 @@ function Footer() {
 
         <div className="flex flex-col gap-3">
           <h4 className="footer-title">หัวข้อ 1</h4>
-          <a className="footer-link" href="#">1.1</a>
-          <a className="footer-link" href="#">1.2</a>
-          <a className="footer-link" href="#">1.3</a>
+          <a className="footer-link" href="/topic/1-1">1.1</a>
+          <a className="footer-link" href="/topic/1-2">1.2</a>
+          <a className="footer-link" href="/topic/1-3">1.3</a>
         </div>
 
         <div className="flex flex-col gap-3">
           <h4 className="footer-title">หัวข้อ 2</h4>
-          <a className="footer-link" href="#">2.1</a>
-          <a className="footer-link" href="#">2.2</a>
+          <a className="footer-link" href="/topic/2-1">2.1</a>
+          <a className="footer-link" href="/topic/2-2">2.2</a>
         </div>
 
         <div className="flex flex-col gap-3">
           <h4 className="footer-title">Developers</h4>
-          <a className="footer-link flex items-center gap-2" href="#">
+          <a className="footer-link flex items-center gap-2" href="/status">
             <span>API Status</span>
             <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
           </a>
@@ -350,6 +351,17 @@ export default function App() {
               ))}
             </div>
           )}
+          <h3 className="text-[#111518] dark:text-white text-base font-medium font-display leading-snug line-clamp-2">
+            {title}
+          </h3>
+
+          {/* คำโปรยจากเมตาดาต้า */}
+          {desc && (
+            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
+              {desc}
+            </p>
+          )}
+
         </section>
 
         {/* หมายเหตุ: Sections "Our Collections" / "Recent Articles" สามารถเชื่อม Omeka S ได้ในขั้นต่อไป */}
