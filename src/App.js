@@ -65,38 +65,42 @@ const createdOf = (item) => {
 /** ====== UI Components (Tailwind) ====== */
 function SiteHeader({ query, setQuery, onSearch }) {
   return (
-    <header className="flex items-center justify-between border-b border-[#f0f3f4] dark:border-gray-800 px-4 sm:px-10 lg:px-40 py-3 bg-white dark:bg-background-dark">
-      <div className="flex items-center gap-4 text-[#111518] dark:text-white">
-        <div className="size-6 text-primary">
-          <svg className="fill-current" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold font-display leading-tight tracking-[-0.015em]">
+  <header className="fixed top-0 left-0 w-full z-50 bg-gradient-to-b from-[#5b4a3e]/80 to-[#5b4a3e]/40 backdrop-blur-lg text-white shadow-md">
+    <div className="max-w-7xl mx-auto flex items-center justify-between px-6 sm:px-10 py-5 md:py-6">
+      {/* โลโก้ + ชื่อโครงการ */}
+      <div className="flex items-center gap-4 md:gap-6">
+        {/* โลโก้ซ้าย (SAC) */}
+        <img
+          src="/assets/logo.png"
+          alt="SAC Logo"
+          className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white/85 p-2 shadow-lg ring-1 ring-white/30"
+        />
+
+        {/* ข้อความชื่อโครงการ */}
+        <h1 className="text-lg md:text-2xl font-bold tracking-wide drop-shadow-sm">
           The Culture Read @CNX
-        </h2>
+        </h1>
       </div>
 
-      <div className="hidden md:flex flex-1 justify-end gap-8">
-        <nav className="flex items-center gap-9">
-          <a className="navlink" href="/">หน้าหลัก</a>
-          <a className="navlink" href="/books">หนังสือ</a>
-          <a className="navlink" href="/articles">บทความ</a>
-          <a className="navlink" href="/events">กิจกรรม</a>
-          <a className="navlink" href="/about">ความเป็นมา</a>
-        </nav>
+      {/* เมนูหลัก */}
+      <nav className="hidden md:flex items-center gap-10 text-sm md:text-base font-medium">
+        <a className="hover:text-[#ffb84d] transition">หน้าหลัก</a>
+        <a className="hover:text-[#ffb84d] transition">แหล่งข้อมูล</a>
+        <a className="hover:text-[#ffb84d] transition">บทความ</a>
+        <a className="hover:text-[#ffb84d] transition">กิจกรรม</a>
+        <a className="hover:text-[#ffb84d] transition">เกี่ยวกับโครงการ</a>
+      </nav>
 
-
-      </div>
-
-      <button className="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
-        <span className="material-symbols-outlined text-[#111518] dark:text-white">
-          menu
-        </span>
+      {/* เมนูมือถือ */}
+      <button className="md:hidden p-3 rounded-lg hover:bg-white/20 transition">
+        <span className="material-symbols-outlined text-white text-2xl">menu</span>
       </button>
-    </header>
+    </div>
+  </header>
+
   );
 }
+
 
 function Hero({ query, setQuery, onSearch }) {
   // 1) รายการสไลด์ (ใส่ลิงก์รูปจริงของคุณ)
