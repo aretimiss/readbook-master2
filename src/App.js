@@ -5,7 +5,7 @@ import "./App.css";
 /** ====== ENV & URL helpers ====== */
 const RAW_BASE =
   process.env.REACT_APP_API_BASE_URL ||
-  "https://z277970-rr25o5.ps07.zwhhosting.com/omekas/api";
+  "";
 const BASE_URL = RAW_BASE.replace(/\/+$/, "");
 
 const withKeys = (url) => {
@@ -14,16 +14,21 @@ const withKeys = (url) => {
   const sep = url.includes("?") ? "&" : "?";
   return `${url}${sep}key_identity=${key_identity}&key_credential=${key_credential}`;
 };
-const api = (path) => withKeys(`${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
+const api = (path) =>
+  withKeys(`${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
 
 const fetchJsonWithProxies = async (finalUrl) => {
   try {
-    const viaAllorigins = `https://api.allorigins.win/get?url=${encodeURIComponent(finalUrl)}`;
+    const viaAllorigins = `https://api.allorigins.win/get?url=${encodeURIComponent(
+      finalUrl
+    )}`;
     const r1 = await axios.get(viaAllorigins, { timeout: 15000 });
     return JSON.parse(r1.data.contents);
   } catch {}
   try {
-    const viaCodetabs = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(finalUrl)}`;
+    const viaCodetabs = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(
+      finalUrl
+    )}`;
     const r2 = await axios.get(viaCodetabs, { timeout: 15000 });
     return r2.data;
   } catch {}
@@ -33,9 +38,7 @@ const fetchJsonWithProxies = async (finalUrl) => {
 
 /** ====== Small helpers ====== */
 const titleOf = (item) =>
-  item["o:title"] ||
-  item["dcterms:title"]?.[0]?.["@value"] ||
-  "ไม่มีชื่อเอกสาร";
+  item["o:title"] || item["dcterms:title"]?.[0]?.["@value"] || "ไม่มีชื่อเอกสาร";
 
 const descOf = (item) =>
   item["dcterms:abstract"]?.[0]?.["@value"] ||
@@ -43,8 +46,8 @@ const descOf = (item) =>
   "";
 
 const thumbOf = (item) =>
-  item?.thumbnail_display_urls?.medium ||
   item?.thumbnail_display_urls?.large ||
+  item?.thumbnail_display_urls?.medium ||
   item?.thumbnail_display_urls?.square ||
   null;
 
@@ -52,94 +55,246 @@ const createdOf = (item) => {
   const iso = item?.["o:created"]?.["@value"];
   if (!iso) return "-";
   const d = new Date(iso);
-  return d.toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" });
+  return d.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 };
 
-/** ====== Components ====== */
-function Header({ query, setQuery, onSearch }) {
+/** ====== UI Components (Tailwind) ====== */
+function SiteHeader({ query, setQuery, onSearch }) {
   return (
-    <header className="nl-header">
-      <div className="nl-header__brand">
-        <div className="nl-logo-circle" />
-        <div className="nl-brand-text">
-          <div className="nl-brand-title">The Culture Read @CNX</div>
-          <div className="nl-brand-sub">The Culture Read @CNX</div>
+    <header className="flex items-center justify-between border-b border-[#f0f3f4] dark:border-gray-800 px-4 sm:px-10 lg:px-40 py-3 bg-white dark:bg-background-dark">
+      <div className="flex items-center gap-4 text-[#111518] dark:text-white">
+        <div className="size-6 text-primary">
+          <svg className="fill-current" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+          </svg>
         </div>
+        <h2 className="text-xl font-bold font-display leading-tight tracking-[-0.015em]">
+          The Culture Read @CNX
+        </h2>
       </div>
 
-      <form
-        className="nl-search"
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSearch?.();
-        }}
-      >
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="ค้นหา…"
-          aria-label="ค้นหา"
-        />
-        <button type="submit" aria-label="ค้นหา">🔍</button>
-      </form>
+      <div className="hidden md:flex flex-1 justify-end gap-8">
+        <nav className="flex items-center gap-9">
+          <a className="navlink" href="#">หน้าหลัก</a>
+          <a className="navlink" href="#">หนังสือ</a>
+          <a className="navlink" href="#">บทความ</a>
+          <a className="navlink" href="#">กิจกรรม</a>
+          <a className="navlink" href="#">ความเป็นมา</a>
+        </nav>
+
+      </div>
+
+      <button className="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+        <span className="material-symbols-outlined text-[#111518] dark:text-white">
+          menu
+        </span>
+      </button>
     </header>
   );
 }
 
-const NavBar = () => (
-  <nav className="nl-navbar">
-    <button className="nl-navlink" type="button">Browse Items</button>
-    <button className="nl-navlink" type="button">Browse Collections</button>
-  </nav>
-);
+function Hero({ query, setQuery, onSearch }) {
+  // 1) รายการสไลด์ (ใส่ลิงก์รูปจริงของคุณ)
+ const slides = [
+  { img: "/assets/hero.jpg",  },
+  { img: "/assets/hero2.jpeg",  },
+  { img: "/assets/hero3.jpg", },
+];
 
-function ItemCard({ item, onOpen }) {
+
+  const [index, setIndex] = useState(0);
+
+  // 2) เปลี่ยนสไลด์อัตโนมัติทุก 5 วิ
+  useEffect(() => {
+    const t = setInterval(() => {
+      setIndex((i) => (i + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [slides.length]);
+
+  const current = slides[index];
+
+  return (
+    // 3) ทำให้ hero เต็มกว้าง สูงตามที่กำหนด
+    <section className="relative w-full h-[520px] md:h-[620px] overflow-hidden">
+      {/* รูปพื้นหลังเต็มกว้าง */}
+      <img
+        src={current.img}
+        alt={current.title}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* เลเยอร์ไล่เฉดมืดเพื่อให้อ่านตัวอักษรง่าย */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+
+      {/* 4) กล่องข้อความแบบมีพื้นหลังโปร่งแสง + เบลอเล็กน้อย (อ่านสบายตา) */}
+      <div className="relative z-10 h-full flex items-center justify-center px-4">
+        <div className="max-w-4xl w-full text-center rounded-2xl shadow-lg p-6 md:p-10">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-snug">
+            {current.title}
+          </h1>
+          <p className="mt-3 text-base md:text-xl text-gray-800 dark:text-gray-200">
+            {current.subtitle}
+          </p>
+
+          {/* ช่องค้นหา */}
+          <form
+            className="mt-6 flex w-full max-w-xl mx-auto"
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSearch?.();
+            }}
+          >
+            <input
+              className="flex-1 h-12 md:h-14 px-4 rounded-l-lg border border-gray-300 focus:outline-none"
+              placeholder="ค้นหาหนังสือ บทความ หรือคอลเลกชัน..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label="ค้นหา"
+            />
+            <button
+              type="submit"
+              className="px-5 rounded-r-lg bg-accent text-white font-bold"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+
+        {/* จุดบอกสถานะสไลด์ */}
+        <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+          {slides.map((_, i) => (
+            <span
+              key={i}
+              className={`w-3 h-3 rounded-full transition-all ${
+                i === index ? "bg-accent scale-110" : "bg-white/60"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+function Card({ item, onOpen }) {
   const title = titleOf(item);
   const desc = descOf(item);
   const thumb = thumbOf(item);
+
   return (
-    <article className="nl-card">
-      {thumb ? (
-        <img
-          src={thumb}
-          alt={title}
-          className="nl-card__thumb"
-          loading="lazy"
-          onError={(e) => (e.currentTarget.style.display = "none")}
-        />
-      ) : (
-        <div className="nl-card__thumb nl-card__thumb--placeholder" />
-      )}
+    <article className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-lg transition-shadow duration-300">
 
-      <h3 className="nl-card__title" title={title}>{title}</h3>
-      {desc && <p className="nl-card__excerpt">{desc}</p>}
+      <div className="w-full bg-gray-100">
+  <div className="relative w-full aspect-[3/4] flex items-center justify-center">
+    {thumb ? (
+      <img
+        src={thumb}
+        alt={title}
+        className="w-full h-full object-contain"
+        loading="lazy"
+      />
+    ) : (
+      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-100" />
+    )}
+  </div>
+</div>
 
-      <div className="nl-card__meta">
-        <span>วันที่สร้าง: {createdOf(item)}</span>
-      </div>
+      <div className="flex flex-col gap-2 p-4 grow">
+  <p className="text-primary text-sm font-bold">ข้อความ</p>
+  <h3 className="text-[#111518] dark:text-white text-base font-medium font-display leading-snug line-clamp-2">
+    {title}
+  </h3>
+  <span className="text-xs text-gray-500">
+    วันที่สร้าง: {createdOf(item)}
+  </span>
 
-      <div className="nl-card__actions">
-        <button onClick={() => onOpen(item)} className="nl-btn">เปิดอ่าน PDF</button>
-      </div>
+  <div className="mt-auto pt-2">
+    <button
+      onClick={() => onOpen(item)}
+      className="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg"
+    >
+      เปิดอ่าน PDF
+    </button>
+  </div>
+</div>
+
     </article>
   );
 }
 
+function Footer() {
+  return (
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 sm:px-10 lg:px-40 py-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="size-6 text-primary">
+              <svg className="fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+              </svg>
+            </div>
+            <h3 className="text-[#111518] dark:text-white text-lg font-bold font-display">
+              The Culture Read @CNX
+            </h3>
+          </div>
+          <p className="text-[#637c88] dark:text-gray-400 text-sm">
+            © 2025 The Culture Read @CNX. All rights reserved.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h4 className="footer-title">หัวข้อ 1</h4>
+          <a className="footer-link" href="#">1.1</a>
+          <a className="footer-link" href="#">1.2</a>
+          <a className="footer-link" href="#">1.3</a>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h4 className="footer-title">หัวข้อ 2</h4>
+          <a className="footer-link" href="#">2.1</a>
+          <a className="footer-link" href="#">2.2</a>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <h4 className="footer-title">Developers</h4>
+          <a className="footer-link flex items-center gap-2" href="#">
+            <span>API Status</span>
+            <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/** ====== App ====== */
 export default function App() {
   const [items, setItems] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const load = async () => {
     try {
       setLoading(true);
-      if (!process.env.REACT_APP_API_KEY_IDENTITY || !process.env.REACT_APP_API_KEY_CREDENTIAL) {
+      if (
+        !process.env.REACT_APP_API_KEY_IDENTITY ||
+        !process.env.REACT_APP_API_KEY_CREDENTIAL
+      ) {
         throw new Error("API keys not found. Please check your .env file.");
       }
-      // ถ้าต้องการใช้ fulltext ของ Omeka S จริง ๆ เปลี่ยนเป็น `api('/items?fulltext_search=' + encodeURIComponent(query))`
+      // ถ้าจะใช้ fulltext จริง ๆ ให้เปลี่ยนเป็น api(`/items?fulltext_search=${encodeURIComponent(query)}`)
       const data = await fetchJsonWithProxies(api("/items"));
       setItems(Array.isArray(data) ? data : []);
       setErr("");
@@ -150,7 +305,6 @@ export default function App() {
     }
   };
 
-  // ค้นหาแบบ client-side (ง่ายและเร็ว)
   const filtered = useMemo(() => {
     if (!query.trim()) return items;
     const q = query.toLowerCase();
@@ -175,31 +329,32 @@ export default function App() {
   };
 
   return (
-    <div className="nl-root">
-      <Header query={query} setQuery={setQuery} onSearch={() => { /* client filter */ }} />
-      <NavBar />
+    <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111518] dark:text-white">
+      <SiteHeader query={query} setQuery={setQuery} onSearch={() => {}} />
+      <main className="flex-1">
+        <Hero query={query} setQuery={setQuery} onSearch={() => {}} />
 
-      <main className="nl-main">
-        <h2 className="nl-section-title">รายการเนื้อหา</h2>
+        <section className="px-4 sm:px-10 lg:px-40">
+          <h2 className="section-title">อยู่ในช่วงพัฒนา</h2>
 
-        {loading ? (
-          <div className="nl-state">กำลังโหลด…</div>
-        ) : err ? (
-          <div className="nl-error">เกิดข้อผิดพลาด: {err}</div>
-        ) : filtered.length === 0 ? (
-          <div className="nl-state">ไม่พบรายการ</div>
-        ) : (
-          <section className="nl-grid">
-            {filtered.map((item) => (
-              <ItemCard key={item["o:id"]} item={item} onOpen={openPDF} />
-            ))}
-          </section>
-        )}
+          {loading ? (
+            <div className="state">กำลังโหลด…</div>
+          ) : err ? (
+            <div className="state text-red-500">เกิดข้อผิดพลาด: {err}</div>
+          ) : filtered.length === 0 ? (
+            <div className="state">ไม่พบรายการ</div>
+          ) : (
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] items-stretch gap-6 p-4">
+              {filtered.slice(0, 12).map((item) => (
+                <Card key={item["o:id"]} item={item} onOpen={openPDF} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* หมายเหตุ: Sections "Our Collections" / "Recent Articles" สามารถเชื่อม Omeka S ได้ในขั้นต่อไป */}
       </main>
-
-      <footer className="nl-footer">
-        <small>© Digital Library · Omeka S API</small>
-      </footer>
+      <Footer />
     </div>
   );
 }
