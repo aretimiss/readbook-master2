@@ -130,7 +130,7 @@ function Hero({ query, setQuery, onSearch }) {
       />
 
       {/* เลเยอร์ไล่เฉดมืดเพื่อให้อ่านตัวอักษรง่าย */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+      {/*<div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />*/}
 
       {/* 4) กล่องข้อความแบบมีพื้นหลังโปร่งแสง + เบลอเล็กน้อย (อ่านสบายตา) */}
       <div className="relative z-10 h-full flex items-center justify-center px-4">
