@@ -401,12 +401,9 @@ export default function BooksPage() {
           )}
         </section>
       </div>
-       {/* เนื้อหาหลัก: sidebar + grid */}
     <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-6 grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
-      {/* ... FilterSection + รายการ + Pagination ตามโค้ดคุณ ... */}
     </div>
-
-    {/* Footer */}
+    
     <Footer />
   </div>
   );
