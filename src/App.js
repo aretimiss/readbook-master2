@@ -351,17 +351,7 @@ export default function App() {
               ))}
             </div>
           )}
-          <h3 className="text-[#111518] dark:text-white text-base font-medium font-display leading-snug line-clamp-2">
-            {title}
-          </h3>
-
-          {/* คำโปรยจากเมตาดาต้า */}
-          {desc && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-              {desc}
-            </p>
-          )}
-
+          
         </section>
 
         {/* หมายเหตุ: Sections "Our Collections" / "Recent Articles" สามารถเชื่อม Omeka S ได้ในขั้นต่อไป */}
